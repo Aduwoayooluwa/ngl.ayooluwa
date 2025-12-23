@@ -1,0 +1,34 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="brandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff0050" />
+      <stop offset="100%" stop-color="#00f2ea" />
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="15" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <g filter="url(#glow)">
+    <!-- Abstract Speech Bubble / Flame Shape -->
+    <path 
+      d="M256 64C160 64 80 136 80 232C80 300 120 360 180 385L160 448L240 400C245 400.5 250 401 256 401C352 401 432 329 432 232C432 136 352 64 256 64Z" 
+      fill="url(#brandGradient)" 
+      stroke="white" 
+      stroke-width="10"
+      stroke-opacity="0.2"
+    />
+    
+    <!-- Inner Mystery / Eye Element -->
+    <path 
+      d="M256 160C210 160 170 200 160 250C170 210 210 190 256 190C302 190 342 210 352 250C342 200 302 160 256 160Z" 
+      fill="white" 
+      fill-opacity="0.9"
+    />
+    <circle cx="256" cy="270" r="25" fill="#1a1a1a" />
+  </g>
+</svg>

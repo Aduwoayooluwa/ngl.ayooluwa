@@ -10,6 +10,9 @@ import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import { useMessages } from '@/hooks/useMessages'
 import { User } from '@supabase/supabase-js'
+import DeleteMessagesModal from '@/components/DeleteMessagesModal'
+import { useQueryClient } from '@tanstack/react-query'
+import { message } from 'antd'
 
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null)
@@ -17,6 +20,8 @@ export default function Dashboard() {
   const supabase = createClient()
   const { data: messages, isLoading, error } = useMessages()
   const [copied, setCopied] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     async function getUser() {
@@ -37,14 +42,32 @@ export default function Dashboard() {
 
   const copyLink = () => {
     if (!user) return
-    // Assuming username is part of metadata or we use ID. 
-    // ideally we have a username. For now let's use user.id or a placeholder if metadata is missing.
-    // In a real NGL clone, you pick a username. Let's assume we grabbed it or use ID.
     const username = user.user_metadata?.username || user.id
     const link = `${window.location.origin}/${username}`
     navigator.clipboard.writeText(link)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleDelete = async (startDate?: Date, endDate?: Date) => {
+    try {
+        let query = supabase.from('messages').delete().eq('user_id', user!.id)
+        
+        if (startDate && endDate) {
+            query = query.gte('created_at', startDate.toISOString())
+                         .lte('created_at', endDate.toISOString())
+        }
+
+        const { error } = await query
+
+        if (error) throw error
+
+        message.success('Messages deleted successfully')
+        // Invalidate query to refresh list
+        queryClient.invalidateQueries({ queryKey: ['messages'] })
+    } catch (e: any) {
+        message.error('Failed to delete messages: ' + e.message)
+    }
   }
 
   if (!user) return null // or loading spinner
@@ -143,6 +166,13 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+      {/* </div> */}
+
+      <DeleteMessagesModal 
+        isOpen={isDeleteModalOpen} 
+        onClose={() => setIsDeleteModalOpen(false)} 
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }
