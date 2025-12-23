@@ -211,8 +211,17 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
           )}
         </AnimatePresence>
       </Card>
+
+        
       
-      <div className="fixed bottom-6 text-center w-full z-10 pointer-events-none">
+      <div className="fixed bottom-6 text-center w-full space-y-6 z-10 pointer-events-none">
+        <a 
+            href="/" 
+            className="pointer-events-auto bg-white text-black px-6 py-3 mx-auto rounded-full w-fit max-w-[90%] md:max-w-sm font-bold text-sm hover:scale-105 transition-transform shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+          >
+            <span>🚀</span>
+            Get your own messages
+          </a>
           <p className="text-gray-600 text-sm font-medium">
              ngl.ayooluwa <span className="mx-2">•</span> 100% Anonymous
           </p>
