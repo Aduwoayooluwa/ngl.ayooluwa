@@ -19,6 +19,13 @@ export async function registerServiceWorker() {
   return null
 }
 
+export async function getSubscriptionStatus() {
+  const registration = await navigator.serviceWorker.ready
+  if (!registration) return false
+  const subscription = await registration.pushManager.getSubscription()
+  return !!subscription
+}
+
 export async function subscribeToPush() {
   const registration = await navigator.serviceWorker.ready
   if (!registration) return

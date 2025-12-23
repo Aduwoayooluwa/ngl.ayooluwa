@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { LogOut, Copy, Inbox, Trash2 } from 'lucide-react' 
+import { LogOut, Copy, Inbox, Trash2, Bell } from 'lucide-react' 
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import { useMessages } from '@/hooks/useMessages'
@@ -12,6 +12,8 @@ import { User } from '@supabase/supabase-js'
 import DeleteMessagesModal from '@/components/DeleteMessagesModal'
 import { useQueryClient } from '@tanstack/react-query'
 import Toast from '@/components/ui/Toast'
+import NotificationPromptModal from '@/components/NotificationPromptModal'
+import { getSubscriptionStatus } from '@/utils/push'
 
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null)
@@ -20,6 +22,7 @@ export default function Dashboard() {
   const { data: messages, isLoading, error } = useMessages()
   const [copied, setCopied] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isNotifPromptOpen, setIsNotifPromptOpen] = useState(false)
   const queryClient = useQueryClient()
   const [toast, setToast] = useState({ message: '', isVisible: false, type: 'success' as 'success' | 'error' })
 
@@ -37,6 +40,18 @@ export default function Dashboard() {
       }
     }
     getUser()
+
+    // Check notification status
+    async function checkNotif() {
+        const isSubscribed = await getSubscriptionStatus()
+        // If not subscribed and we haven't bugged them in this session (simplified for now: just check status)
+        if (!isSubscribed) {
+             // Small delay for better UX
+             setTimeout(() => setIsNotifPromptOpen(true), 1500)
+        }
+    }
+    checkNotif()
+
   }, [router, supabase])
 
   const handleLogout = async () => {
@@ -74,7 +89,7 @@ export default function Dashboard() {
     }
   }
 
-  if (!user) return null // or loading spinner
+  if (!user) return null 
 
   const username = user.user_metadata?.username || "Anonymous"
 
@@ -98,7 +113,10 @@ export default function Dashboard() {
                    }
                 }}
             >
-            Enable Notifications
+   
+            
+            <Bell size={18} />
+            <span className="hidden md:inline"> Enable Notifications</span>
             </Button>
             
             <Button 
@@ -107,13 +125,14 @@ export default function Dashboard() {
                 onClick={() => setIsDeleteModalOpen(true)} 
                 className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
             >
+            
                 <Trash2 size={18} />
-                Clear
+                <span className="hidden md:inline">Clear</span>
             </Button>
 
             <Button variant="ghost" size="sm" onClick={handleLogout}>
             <LogOut size={18} />
-            Logout
+            <span className="hidden md:inline">Logout</span>
             </Button>
         </div>
       </header>
@@ -186,6 +205,11 @@ export default function Dashboard() {
         isOpen={isDeleteModalOpen} 
         onClose={() => setIsDeleteModalOpen(false)} 
         onConfirm={handleDelete}
+      />
+
+      <NotificationPromptModal
+        isOpen={isNotifPromptOpen}
+        onClose={() => setIsNotifPromptOpen(false)}
       />
 
       <Toast 

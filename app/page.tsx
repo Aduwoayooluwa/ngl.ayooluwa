@@ -5,9 +5,23 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
-import { ArrowRight, Shield, Zap, Sparkles } from 'lucide-react'
+import { ArrowRight, Shield, Zap, Sparkles, LayoutDashboard } from 'lucide-react'
+import { createClient } from '@/utils/supabase/client'
+import { useEffect, useState } from 'react'
+import { User } from '@supabase/supabase-js'
 
 export default function Home() {
+  const [user, setUser] = useState<User | null>(null)
+  const supabase = createClient()
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+    }
+    getUser()
+  }, [])
+
   return (
     <div className="min-h-screen bg-black overflow-hidden relative selection:bg-brand-primary/30">
       
@@ -24,12 +38,23 @@ export default function Home() {
           ngl<span className="text-brand-primary">.ayooluwa</span>
         </div>
         <div className="flex gap-4">
-          <Link href="/login">
-            <Button variant="ghost" size="sm">Log In</Button>
-          </Link>
-          <Link href="/signup">
-            <Button size="sm">Get Started</Button>
-          </Link>
+          {user ? (
+            <Link href="/dashboard">
+              <Button size="sm">
+                <LayoutDashboard size={16} />
+                Dashboard
+              </Button>
+            </Link>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost" size="sm">Log In</Button>
+              </Link>
+              <Link href="/signup">
+                <Button size="sm">Get Started</Button>
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 
@@ -58,12 +83,21 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
-            <Link href="/signup">
-              <Button size="lg" className="text-xl px-10 h-16">
-                Get Your Link
-                <ArrowRight className="ml-2" />
-              </Button>
-            </Link>
+            {user ? (
+               <Link href="/dashboard">
+                 <Button size="lg" className="text-xl px-10 h-16">
+                   Go to Inbox
+                   <ArrowRight className="ml-2" />
+                 </Button>
+               </Link>
+            ) : (
+                <Link href="/signup">
+                <Button size="lg" className="text-xl px-10 h-16">
+                    Get Your Link
+                    <ArrowRight className="ml-2" />
+                </Button>
+                </Link>
+            )}
           </div>
         </motion.div>
       </main>

@@ -34,7 +34,7 @@ export default function Toast({ message, isVisible, onClose, type = 'success' }:
                 {type === 'success' ? <Trash2 size={16} /> : <X size={16} />} 
                 {/* Using Trash2 icon for success here because the context is "Deleted Successfully" */}
             </div>
-            <span className="text-white font-medium">{message}</span>
+            <span className="text-white font-medium text-nowrap">{message}</span>
         </motion.div>
       )}
     </AnimatePresence>
