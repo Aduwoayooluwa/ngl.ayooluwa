@@ -23,6 +23,7 @@ export default function Dashboard() {
   const [copied, setCopied] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [isNotifPromptOpen, setIsNotifPromptOpen] = useState(false)
+  const [isSubscribed, setIsSubscribed] = useState(false)
   const queryClient = useQueryClient()
   const [toast, setToast] = useState({ message: '', isVisible: false, type: 'success' as 'success' | 'error' })
 
@@ -43,9 +44,10 @@ export default function Dashboard() {
 
     // Check notification status
     async function checkNotif() {
-        const isSubscribed = await getSubscriptionStatus()
+        const status = await getSubscriptionStatus()
+        setIsSubscribed(status)
         // If not subscribed and we haven't bugged them in this session (simplified for now: just check status)
-        if (!isSubscribed) {
+        if (!status) {
              // Small delay for better UX
              setTimeout(() => setIsNotifPromptOpen(true), 1500)
         }
@@ -99,6 +101,7 @@ export default function Dashboard() {
       <header className="flex justify-between items-center">
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
         <div className="flex gap-2">
+            {!isSubscribed && (
             <Button 
                 variant="ghost" 
                 size="sm" 
@@ -106,18 +109,18 @@ export default function Dashboard() {
                    try {
                      const mod = await import('@/utils/push')
                      await mod.subscribeToPush()
-                     alert('Subscribed successfully! You might have to check your browser permission settings if you didn\'t see a prompt.')
+                     setIsSubscribed(true)
+                     showToast('Notifications enabled!', 'success')
                    } catch (e: any) {
-                     alert('Error subscribing: ' + e.message)
+                     showToast('Error subscribing: ' + e.message, 'error')
                      console.error(e)
                    }
                 }}
             >
-   
-            
             <Bell size={18} />
             <span className="hidden md:inline"> Enable Notifications</span>
             </Button>
+            )}
             
             <Button 
                 variant="ghost" 
