@@ -96,7 +96,7 @@ export default function Dashboard() {
   const username = user.user_metadata?.username || "Anonymous"
 
   return (
-    <div className="min-h-screen p-4 md:p-8 max-w-7xl mx-auto space-y-8">
+    <div className="min-h-dvh p-4 md:p-8 max-w-7xl mx-auto space-y-8">
       {/* Header */}
       <header className="flex justify-between items-center">
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>

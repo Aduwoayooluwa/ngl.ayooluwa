@@ -132,7 +132,7 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-black">
+    <div className="min-h-dvh flex items-center justify-center p-4 bg-black">
       {/* Background Ambience */}
       <div className="fixed inset-0 z-0 opacity-30 pointer-events-none">
          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,_#ff0050_0%,_transparent_50%)]" />

@@ -23,7 +23,7 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-black overflow-hidden relative selection:bg-brand-primary/30">
+    <div className="min-h-dvh bg-black overflow-hidden relative selection:bg-brand-primary/30">
       
       {/* Background Ambience */}
       <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-[radial-gradient(circle,_var(--color-brand-primary)_0%,_transparent_70%)] opacity-20 blur-[120px] animate-pulse-slow" />

@@ -1,5 +1,5 @@
-
 import { NextResponse } from 'next/server'
+import { LOGO_URL } from '@/utils/constants'
 import { createClient } from '@supabase/supabase-js' // Use direct SDK for Admin
 import webpush from 'web-push'
 
@@ -70,6 +70,8 @@ export async function POST(request: Request) {
           JSON.stringify({
             title: 'New Anonymous Message!',
             body: content,
+            icon: LOGO_URL,
+            badge: LOGO_URL
           })
         )
         console.log('[API] Push sent successfully!')

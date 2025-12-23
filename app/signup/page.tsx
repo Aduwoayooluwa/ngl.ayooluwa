@@ -60,7 +60,7 @@ export default function SignUp() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-[url('/bg-gradient.svg')] bg-cover">
+    <div className="min-h-dvh flex items-center justify-center p-4 bg-[url('/bg-gradient.svg')] bg-cover">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-0" />
       
       <Card className="w-full max-w-md relative z-10" hoverEffect>

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/providers/QueryProvider";
+import { LOGO_URL } from "@/utils/constants";
 
 const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
@@ -11,7 +12,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
 }
-const logoUrl = "https://res.cloudinary.com/ddztldkdq/image/upload/v1766517150/logo_ixwnnf.png";
+
+
 
 export const metadata: Metadata = {
   title: "NGL.ayooluwa | Anonymous Q&A",
@@ -28,7 +30,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
         {
-          url: logoUrl,
+          url: LOGO_URL,
           width: 800,
           height: 600,
           alt: 'NGL.ayooluwa Logo',
@@ -42,9 +44,9 @@ export const metadata: Metadata = {
     creator: "@aduwoayooluwa", 
   },
   icons: {
-    icon: logoUrl, 
-    shortcut: logoUrl,
-    apple: logoUrl,
+    icon: LOGO_URL, 
+    shortcut: LOGO_URL,
+    apple: LOGO_URL,
   },
   manifest: "/manifest.json",
 };
