@@ -11,12 +11,13 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
 }
+const logoUrl = "https://res.cloudinary.com/ddztldkdq/image/upload/v1766517150/logo_ixwnnf.png";
 
 export const metadata: Metadata = {
   title: "NGL.ayooluwa | Anonymous Q&A",
   description: "Get anonymous messages from your friends, followers, and fans. The most premium anonymous messaging experience.",
   applicationName: "NGL.ayooluwa",
-  keywords: ["ngl", "anonymous", "questions", "messaging", "feedback", "social"],
+  keywords: ["ngl", "anonymous", "questions", "messaging", "feedback", "social", "fun"],
   authors: [{ name: "Aduwo Ayooluwa" }],
   openGraph: {
     title: "NGL.ayooluwa | Ask Me Anything",
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
         {
-          url: 'https://ngl.ayooluwa.com/logo.svg',
+          url: logoUrl,
           width: 800,
           height: 600,
           alt: 'NGL.ayooluwa Logo',
@@ -41,9 +42,9 @@ export const metadata: Metadata = {
     creator: "@aduwoayooluwa", 
   },
   icons: {
-    icon: "https://ngl.ayooluwa.com/logo.svg", 
-    shortcut: "https://ngl.ayooluwa.com/logo.svg",
-    apple: "https://ngl.ayooluwa.com/logo.svg",
+    icon: logoUrl, 
+    shortcut: logoUrl,
+    apple: logoUrl,
   },
   manifest: "/manifest.json",
 };
