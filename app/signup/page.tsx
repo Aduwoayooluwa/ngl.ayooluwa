@@ -9,24 +9,28 @@ import { motion } from 'framer-motion'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Card from '@/components/ui/Card'
+import Toast from '@/components/ui/Toast'
 
 export default function SignUp() {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
+  const [toast, setToast] = useState({ message: '', isVisible: false, type: 'success' as 'success' | 'error' })
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ message, isVisible: true, type })
+  }
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
 
     // Basic username validation
     if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      setError("Username can only submit letters, numbers, and underscores.")
+      showToast("Username can only contain letters, numbers, and underscores.", 'error')
       setLoading(false)
       return
     }
@@ -44,12 +48,13 @@ export default function SignUp() {
 
 
     if (error) {
-      setError(error.message)
+      showToast(error.message, 'error')
     } else {
       // In a real app, you might ask for email confirmation.
       // For this demo, let's assume they might be auto-signed in or directed to check email.
       // Supabase default is "Confirm Email".
-      setError("Check your email for the confirmation link!")
+      showToast("Account created! Check email for link.", 'success')
+      // Optional: redirect to login or check-email page after delay, or just let them sit there.
     }
     setLoading(false)
   }
@@ -98,15 +103,12 @@ export default function SignUp() {
             placeholder="••••••••"
           />
 
-          {error && (
-            <motion.div 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              className={`text-sm text-center p-2 rounded ${error.includes('Check') ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
-            >
-              {error}
-            </motion.div>
-          )}
+          <Toast 
+            message={toast.message}
+            isVisible={toast.isVisible}
+            type={toast.type}
+            onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
+          />
 
           <Button type="submit" className="w-full" loading={loading}>
             Create Account

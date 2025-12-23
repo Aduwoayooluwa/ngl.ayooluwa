@@ -9,19 +9,24 @@ import { motion } from 'framer-motion'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Card from '@/components/ui/Card'
+import Toast from '@/components/ui/Toast'
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
+  const [toast, setToast] = useState({ message: '', isVisible: false, type: 'success' as 'success' | 'error' })
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ message, isVisible: true, type })
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
+    setLoading(true)
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -29,11 +34,15 @@ export default function Login() {
     })
 
     if (error) {
-      setError(error.message)
+      showToast(error.message, 'error')
+      setLoading(false)
     } else {
-      router.push('/dashboard')
+      showToast('Welcome back!', 'success')
+      // Small delay to let the toast be seen before redirect
+      setTimeout(() => {
+          router.push('/dashboard')
+      }, 1000)
     }
-    setLoading(false)
   }
 
   return (
@@ -74,15 +83,12 @@ export default function Login() {
             placeholder="••••••••"
           />
 
-          {error && (
-            <motion.div 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              className="bg-red-500/20 text-red-400 text-sm p-2 rounded text-center"
-            >
-              {error}
-            </motion.div>
-          )}
+          <Toast 
+            message={toast.message}
+            isVisible={toast.isVisible}
+            type={toast.type}
+            onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
+          />
 
           <Button type="submit" className="w-full" loading={loading}>
             Sign In
