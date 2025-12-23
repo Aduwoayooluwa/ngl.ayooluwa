@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Outfit } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/providers/QueryProvider";
 
-const outfit = Outfit({ subsets: ["latin"] });
+const plusJakarta = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 export const viewport: Viewport = {
   themeColor: "#ff0050",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
         {
-          url: '/logo.svg',
+          url: 'https://ngl.ayooluwa.com/logo.svg',
           width: 800,
           height: 600,
           alt: 'NGL.ayooluwa Logo',
@@ -41,9 +41,9 @@ export const metadata: Metadata = {
     creator: "@aduwoayooluwa", 
   },
   icons: {
-    icon: "/logo.svg", 
-    shortcut: "/logo.svg",
-    apple: "/logo.svg",
+    icon: "https://ngl.ayooluwa.com/logo.svg", 
+    shortcut: "https://ngl.ayooluwa.com/logo.svg",
+    apple: "https://ngl.ayooluwa.com/logo.svg",
   },
   manifest: "/manifest.json",
 };
@@ -55,7 +55,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={outfit.className}>
+      <body className={plusJakarta.className}>
         <QueryProvider>
           {children}
         </QueryProvider>
