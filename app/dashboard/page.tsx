@@ -1,18 +1,17 @@
-
 'use client'
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { LogOut, Copy, Inbox, Share2 } from 'lucide-react'
+import { LogOut, Copy, Inbox, Trash2 } from 'lucide-react' 
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import { useMessages } from '@/hooks/useMessages'
 import { User } from '@supabase/supabase-js'
 import DeleteMessagesModal from '@/components/DeleteMessagesModal'
 import { useQueryClient } from '@tanstack/react-query'
-import { message } from 'antd'
+import Toast from '@/components/ui/Toast'
 
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null)
@@ -22,6 +21,11 @@ export default function Dashboard() {
   const [copied, setCopied] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const queryClient = useQueryClient()
+  const [toast, setToast] = useState({ message: '', isVisible: false, type: 'success' as 'success' | 'error' })
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ message, isVisible: true, type })
+  }
 
   useEffect(() => {
     async function getUser() {
@@ -62,11 +66,11 @@ export default function Dashboard() {
 
         if (error) throw error
 
-        message.success('Messages deleted successfully')
+        showToast('Messages deleted successfully', 'success')
         // Invalidate query to refresh list
         queryClient.invalidateQueries({ queryKey: ['messages'] })
     } catch (e: any) {
-        message.error('Failed to delete messages: ' + e.message)
+        showToast('Failed to delete messages: ' + e.message, 'error')
     }
   }
 
@@ -96,6 +100,17 @@ export default function Dashboard() {
             >
             Enable Notifications
             </Button>
+            
+            <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setIsDeleteModalOpen(true)} 
+                className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+            >
+                <Trash2 size={18} />
+                Clear
+            </Button>
+
             <Button variant="ghost" size="sm" onClick={handleLogout}>
             <LogOut size={18} />
             Logout
@@ -166,12 +181,18 @@ export default function Dashboard() {
           </div>
         )}
       </div>
-      {/* </div> */}
 
       <DeleteMessagesModal 
         isOpen={isDeleteModalOpen} 
         onClose={() => setIsDeleteModalOpen(false)} 
         onConfirm={handleDelete}
+      />
+
+      <Toast 
+        message={toast.message}
+        isVisible={toast.isVisible}
+        type={toast.type}
+        onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
       />
     </div>
   )
