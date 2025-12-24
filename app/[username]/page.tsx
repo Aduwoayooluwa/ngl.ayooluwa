@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
-import { Send, CheckCircle } from 'lucide-react'
+import { Send, CheckCircle, SearchX, Home } from 'lucide-react'
 
 // Correctly typing params for Next.js 15+ (can be async or hook based, using React.use for safe access of params)
 // But to be safe with all Next versions and TS, we can treat params as a generic promise or prop.
@@ -28,6 +28,8 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
   const [sent, setSent] = useState(false)
   const [profileId, setProfileId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [isInvalidUser, setIsInvalidUser] = useState(false)
+  const [checkingUser, setCheckingUser] = useState(true)
   const supabase = createClient()
 
   useEffect(() => {
@@ -43,12 +45,9 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
       if (data) {
         setProfileId(data.id)
       } else {
-        // Fallback for demo: if no profile found, maybe the username IS the id (unlikely but possible during dev)
-        // OR just show error
-        console.error("Profile not found")
-        // For testing purposes without a real profiles table, we might fail here.
-        // I will assume the user has set this up.
+        setIsInvalidUser(true)
       }
+      setCheckingUser(false)
     }
     getProfile()
   }, [username, supabase])
@@ -63,7 +62,7 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
     const targetId = profileId
     
     if (!targetId) {
-        setError("Something went wrong")
+        setError("User does not exist!")
         setLoading(false)
         return
     }
@@ -129,6 +128,55 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
   const resetForm = () => {
     setSent(false)
     setError(null)
+  }
+  if (checkingUser) {
+    return (
+        <div className="min-h-dvh flex items-center justify-center p-4 bg-black">
+        <div className="fixed inset-0 z-0 opacity-30 pointer-events-none">
+           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,_#ff0050_0%,_transparent_50%)]" />
+        </div>
+        <div className="animate-pulse bg-white/10 w-16 h-16 rounded-full" />
+      </div>
+    )
+  }
+
+  if (isInvalidUser) {
+    return (
+        <div className="min-h-dvh flex flex-col items-center justify-center p-4 bg-black">
+        {/* Background Ambience */}
+        <div className="fixed inset-0 z-0 opacity-30 pointer-events-none">
+           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,_#ff0050_0%,_transparent_50%)]" />
+        </div>
+  
+        <Card className="w-full max-w-md relative z-10 text-center space-y-6 py-10" variant="strong">
+            <div className="mx-auto w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 mb-4">
+               <SearchX size={48} />
+            </div>
+            
+            <div className="space-y-2">
+                <h1 className="text-3xl font-bold text-white">User not found</h1>
+                <p className="text-gray-400">
+                    The user <span className="text-brand-primary font-bold">@{username}</span> does not exist or has deleted their account.
+                </p>
+            </div>
+  
+            <div className="pt-4">
+                <a href="/" className="inline-block w-full">
+                    <Button className="w-full">
+                        <Home size={18} className="mr-2"/>
+                        Create your own Link
+                    </Button>
+                </a>
+            </div>
+        </Card>
+        
+        <div className="fixed bottom-6 text-center w-full z-10">
+            <p className="text-gray-600 text-sm font-medium">
+               ngl.ayooluwa <span className="mx-2">•</span> 100% Anonymous
+            </p>
+        </div>
+      </div>
+    )
   }
 
   return (
