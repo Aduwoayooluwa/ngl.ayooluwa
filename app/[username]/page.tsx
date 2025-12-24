@@ -57,6 +57,17 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
     if (!message.trim()) return
     
     setLoading(true)
+
+    const getMeta = () => {
+        return {
+            userAgent: navigator.userAgent,
+            language: navigator.language,
+            screenHeight: window.screen.height,
+            screenWidth: window.screen.width,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            referrer: document.referrer
+        }
+    }
     
     
     const targetId = profileId
@@ -76,7 +87,8 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
             },
             body: JSON.stringify({
                 userId: targetId,
-                content: message
+                content: message,
+                meta: getMeta()
             })
         })
 

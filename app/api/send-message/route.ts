@@ -18,7 +18,13 @@ webpush.setVapidDetails(
 
 export async function POST(request: Request) {
   try {
-    const { userId, content } = await request.json()
+    const { userId, content, meta } = await request.json()
+
+    // Capture IP address
+    const ip = request.headers.get('x-forwarded-for') || 'unknown'
+    
+    // Combine client meta with server-side info
+    const fullMeta = { ...meta, ip, timestamp: new Date().toISOString() }
     
     // Use Service Role Key to bypass RLS so we can read the recipient's subscription
     // The sender (anonymous) doesn't have permission to see the recipient's sub.
@@ -41,6 +47,7 @@ export async function POST(request: Request) {
       .insert({
         user_id: userId,
         content: content,
+        meta: fullMeta
       })
 
     if (dbError) {
