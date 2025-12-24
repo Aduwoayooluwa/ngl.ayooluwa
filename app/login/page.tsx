@@ -46,7 +46,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-dvh flex items-center justify-center p-4">
+    <div className="min-h-dvh flex items-center justify-center p-3 md:p-4">
       {/* Dynamic Background */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-primary/20 rounded-full blur-[120px]" />
@@ -58,7 +58,7 @@ export default function Login() {
           <motion.h1 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl font-black text-white mb-2 tracking-tighter"
+            className="text-3xl md:text-4xl font-black text-white mb-2 tracking-tighter"
           >
             Welcome Back
           </motion.h1>

@@ -33,21 +33,21 @@ export default function Home() {
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
 
       {/* Nav */}
-      <nav className="relative z-50 flex items-center justify-between p-6 max-w-7xl mx-auto">
-        <div className="text-2xl font-black tracking-tighter text-white">
+      <nav className="relative z-50 flex items-center justify-between p-4 md:p-6 max-w-7xl mx-auto">
+        <div className="text-xl md:text-2xl font-black tracking-tighter text-white">
           ngl<span className="text-brand-primary">.ayooluwa</span>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-2 md:gap-4">
           {user ? (
             <Link href="/dashboard">
               <Button size="sm">
                 <LayoutDashboard size={16} />
-                Dashboard
+                <span className="hidden sm:inline">Dashboard</span>
               </Button>
             </Link>
           ) : (
             <>
-              <Link href="/login">
+              <Link href="/login" className="hidden sm:block">
                 <Button variant="ghost" size="sm">Log In</Button>
               </Link>
               <Link href="/signup">
@@ -71,7 +71,7 @@ export default function Home() {
             <span>The Place for Honest Feedback</span>
           </div>
 
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white max-w-5xl mx-auto leading-[0.9]">
+          <h1 className="text-4xl md:text-6xl lg:text-8xl font-black tracking-tighter text-white max-w-5xl mx-auto leading-[0.9]">
             Discover what people <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-purple-500 to-brand-secondary">
               really think.
@@ -123,7 +123,7 @@ export default function Home() {
              {/* Card 1: Anonymous */}
              <motion.div 
                whileHover={{ y: -10 }}
-               className="col-span-1 md:col-span-2 p-8 rounded-[2.5rem] bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 backdrop-blur-xl relative overflow-hidden group"
+               className="col-span-1 md:col-span-2 p-6 md:p-8 rounded-[2.5rem] bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 backdrop-blur-xl relative overflow-hidden group"
              >
                 <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/20 blur-[100px] group-hover:bg-brand-primary/30 transition-all duration-500" />
                 <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6">
@@ -142,7 +142,7 @@ export default function Home() {
              {/* Card 2: Instant */}
              <motion.div 
                whileHover={{ y: -10 }}
-               className="col-span-1 p-8 rounded-[2.5rem] bg-gradient-to-bl from-white/5 to-white/[0.02] border border-white/10 backdrop-blur-xl relative overflow-hidden group"
+               className="col-span-1 p-6 md:p-8 rounded-[2.5rem] bg-gradient-to-bl from-white/5 to-white/[0.02] border border-white/10 backdrop-blur-xl relative overflow-hidden group"
              >
                <div className="absolute bottom-0 left-0 w-full h-32 bg-purple-500/10 blur-[60px] group-hover:bg-purple-500/20 transition-all" />
                <div className="relative z-10 flex flex-col items-center text-center gap-4">
@@ -159,7 +159,7 @@ export default function Home() {
              {/* Card 3: Design */}
              <motion.div 
                whileHover={{ y: -10 }}
-               className="col-span-1 md:col-span-3 p-10 rounded-[2.5rem] bg-gradient-to-r from-gray-900 to-black border border-white/10 relative overflow-hidden group"
+               className="col-span-1 md:col-span-3 p-6 md:p-10 rounded-[2.5rem] bg-gradient-to-r from-gray-900 to-black border border-white/10 relative overflow-hidden group"
              >
                 <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-brand-secondary/5 blur-[80px]" />

@@ -21,7 +21,7 @@ export default function Card({
       initial={hoverEffect ? { y: 0 } : undefined}
       whileHover={hoverEffect ? { y: -5, boxShadow: '0 20px 40px -10px rgba(0,0,0,0.5)' } : undefined}
       className={`
-        rounded-3xl p-6
+        rounded-3xl p-4 md:p-6
         ${variant === 'default' ? 'glass' : 'glass-strong'}
         ${className}
       `}

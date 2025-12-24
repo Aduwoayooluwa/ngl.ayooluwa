@@ -160,7 +160,7 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,_#ff0050_0%,_transparent_50%)]" />
         </div>
   
-        <Card className="w-full max-w-md relative z-10 text-center space-y-6 py-10" variant="strong">
+        <Card className="w-full max-w-md relative z-10 text-center space-y-4 md:space-y-6 py-6 md:py-10" variant="strong">
             <div className="mx-auto w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 mb-4">
                <SearchX size={48} />
             </div>
@@ -192,13 +192,13 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
   }
 
   return (
-    <div className="min-h-dvh flex items-center justify-center p-4 bg-black">
+    <div className="min-h-dvh flex items-center justify-center p-3 md:p-4 bg-black">
       {/* Background Ambience */}
       <div className="fixed inset-0 z-0 opacity-30 pointer-events-none">
          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,_#ff0050_0%,_transparent_50%)]" />
       </div>
 
-      <Card className="w-full max-w-md relative z-10 min-h-[400px] flex flex-col justify-center" variant="strong">
+      <Card className="w-full max-w-md relative z-10 min-h-[350px] flex flex-col justify-center" variant="strong">
         <AnimatePresence mode="wait">
           {!sent ? (
             <motion.div
@@ -206,7 +206,7 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="space-y-6"
+              className="space-y-4 md:space-y-6"
             >
               <div className="text-center space-y-2">
                 <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-brand-primary to-brand-secondary mx-auto p-[2px]">
