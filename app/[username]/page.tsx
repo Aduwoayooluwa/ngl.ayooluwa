@@ -63,7 +63,7 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
     const targetId = profileId
     
     if (!targetId) {
-        setError("User not found or database not ready.")
+        setError("Something went wrong")
         setLoading(false)
         return
     }
