@@ -14,6 +14,11 @@ import { useQueryClient } from '@tanstack/react-query'
 import Toast from '@/components/ui/Toast'
 import NotificationPromptModal from '@/components/NotificationPromptModal'
 import { getSubscriptionStatus } from '@/utils/push'
+import { toPng } from 'html-to-image'
+import { useRef } from 'react'
+import { IGShareCard } from '@/components/IGShareCard'
+import { MessageShareCard } from '@/components/MessageShareCard'
+import { Instagram, Download } from 'lucide-react'
 
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null)
@@ -26,6 +31,11 @@ export default function Dashboard() {
   const [isSubscribed, setIsSubscribed] = useState(false)
   const queryClient = useQueryClient()
   const [toast, setToast] = useState({ message: '', isVisible: false, type: 'success' as 'success' | 'error' })
+  
+  const shareRef = useRef<HTMLDivElement>(null)
+  const messageShareRef = useRef<HTMLDivElement>(null)
+  const [generatingImage, setGeneratingImage] = useState(false)
+  const [messageToShare, setMessageToShare] = useState<string | null>(null)
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, isVisible: true, type })
@@ -90,6 +100,50 @@ export default function Dashboard() {
         showToast('Failed to delete messages: ' + e.message, 'error')
     }
   }
+
+  const handleShare = async () => {
+    if (shareRef.current === null) {
+      return
+    }
+    setGeneratingImage(true)
+    try {
+        // Double size for retina displays
+        const dataUrl = await toPng(shareRef.current, { cacheBust: true, pixelRatio: 2 })
+        const link = document.createElement('a')
+        link.download = `ngl-ayooluwa-share-${username}.png`
+        link.href = dataUrl
+        link.click()
+        showToast('Image saved! Post it to your Story.', 'success')
+    } catch (err) {
+      console.error(err)
+      showToast('Could not generate image', 'error')
+    }
+    setGeneratingImage(false)
+  }
+  
+  // Effect to capture message share card when state changes
+  useEffect(() => {
+    const element = messageShareRef.current
+    if (messageToShare && element) {
+        const generate = async () => {
+            try {
+                // Wait a tick to ensure render
+                await new Promise(resolve => setTimeout(resolve, 100))
+                const dataUrl = await toPng(element, { cacheBust: true, pixelRatio: 2 })
+                const link = document.createElement('a')
+                link.download = `ngl-message.png`
+                link.href = dataUrl
+                link.click()
+                showToast('Message ready to share!', 'success')
+            } catch (err) {
+                console.error(err)
+                showToast('Failed to generate image', 'error')
+            }
+            setMessageToShare(null)
+        }
+        generate()
+    }
+  }, [messageToShare])
 
   if (!user) return null 
 
@@ -159,6 +213,11 @@ export default function Dashboard() {
              {copied ? 'Copied!' : 'Copy Link'}
              <Copy size={18} />
            </Button>
+            
+           <Button onClick={handleShare} className="w-full sm:w-auto shrink-0 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600" loading={generatingImage}>
+             Share to IG
+             <Instagram size={18} />
+           </Button>
         </div>
       </Card>
 
@@ -186,8 +245,17 @@ export default function Dashboard() {
                   <p className="text-lg font-medium leading-relaxed">
                     {msg.content}
                   </p>
-                  <div className="mt-4 text-xs text-gray-500 font-mono text-right">
-                    {new Date(msg.created_at).toLocaleDateString()}
+                  <div className="mt-4 flex justify-between items-end">
+                     <button 
+                        onClick={() => setMessageToShare(msg.content)}
+                        className="text-gray-400 hover:text-brand-primary transition-colors p-2 hover:bg-brand-primary/10 rounded-full"
+                        title="Share this message"
+                     >
+                        <Download size={18} />
+                     </button>
+                     <div className="text-xs text-gray-500 font-mono">
+                        {new Date(msg.created_at).toLocaleDateString()}
+                     </div>
                   </div>
                 </Card>
               </motion.div>
@@ -221,6 +289,12 @@ export default function Dashboard() {
         type={toast.type}
         onClose={() => setToast(prev => ({ ...prev, isVisible: false }))}
       />
+
+      {/* Hidden Share Card for capture */}
+      <div style={{ position: 'absolute', top: '-9999px', left: '-9999px' }}>
+         <IGShareCard ref={shareRef} username={username} />
+         <MessageShareCard ref={messageShareRef} message={messageToShare || '...'} username={username} />
+      </div>
     </div>
   )
 }

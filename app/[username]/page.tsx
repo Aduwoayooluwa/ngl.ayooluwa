@@ -7,7 +7,20 @@ import { motion, AnimatePresence } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
-import { Send, CheckCircle, SearchX, Home } from 'lucide-react'
+import { Send, CheckCircle, SearchX, Home, Dices } from 'lucide-react'
+
+const PROMPTS = [
+  "Send me anonymous compliments! 💖",
+  "What's your honest first impression of me? 🤔",
+  "Rate my style from 1-10 🔥",
+  "What's one thing you've always wanted to tell me? 🤫",
+  "Do you have a crush on me? Yes or No? 💘",
+  "What's the best advice you can give me? 💡",
+  "If we could go anywhere, where would we go? ✈️",
+  "What's a song that reminds you of me? 🎵",
+  "Confess something you feel guilty about... 🤐",
+  "Describe me in 3 words! ✨"
+]
 
 // Correctly typing params for Next.js 15+ (can be async or hook based, using React.use for safe access of params)
 // But to be safe with all Next versions and TS, we can treat params as a generic promise or prop.
@@ -141,6 +154,11 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
     setSent(false)
     setError(null)
   }
+
+  const handleDiceRoll = () => {
+    const randomPrompt = PROMPTS[Math.floor(Math.random() * PROMPTS.length)]
+    setMessage(randomPrompt)
+  }
   if (checkingUser) {
     return (
         <div className="min-h-dvh flex items-center justify-center p-4 bg-black">
@@ -231,8 +249,16 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
                     maxLength={300}
                     required
                   />
-                  <div className="absolute bottom-3 right-4 text-xs text-gray-600">
-                    {message.length}/300
+                  <div className="absolute bottom-3 right-4 text-xs text-gray-600 flex items-center gap-3">
+                    <button
+                        type="button"
+                        onClick={handleDiceRoll}
+                        className="flex items-center gap-1 text-brand-secondary hover:text-white transition-colors text-xs font-bold bg-white/5 hover:bg-white/10 px-2 py-1 rounded-full backdrop-blur-md"
+                    >
+                        <Dices size={14} />
+                        Roll Dice
+                    </button>
+                    <span>{message.length}/300</span>
                   </div>
                 </div>
 
