@@ -8,6 +8,7 @@ import confetti from 'canvas-confetti'
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import { Send, CheckCircle, SearchX, Home, Dices } from 'lucide-react'
+import { THEMES } from '@/utils/constants'
 
 const PROMPTS = [
   "Send me anonymous compliments! 💖",
@@ -43,6 +44,7 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
   const [error, setError] = useState<string | null>(null)
   const [isInvalidUser, setIsInvalidUser] = useState(false)
   const [checkingUser, setCheckingUser] = useState(true)
+  const [theme, setTheme] = useState('default')
   const supabase = createClient()
 
   useEffect(() => {
@@ -51,12 +53,18 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
     async function getProfile() {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id')
+        .select('id, theme')
         .eq('username', username)
         .single()
       
       if (data) {
         setProfileId(data.id)
+        setTheme(data.theme || 'default')
+        // Log Page View
+        fetch('/api/analytics', {
+            method: 'POST',
+            body: JSON.stringify({ userId: data.id, eventType: 'page_view' })
+        }).catch(err => console.error(err))
       } else {
         setIsInvalidUser(true)
       }
@@ -158,6 +166,14 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
   const handleDiceRoll = () => {
     const randomPrompt = PROMPTS[Math.floor(Math.random() * PROMPTS.length)]
     setMessage(randomPrompt)
+    
+    // Track dice roll
+    if (profileId) {
+        fetch('/api/analytics', {
+            method: 'POST',
+            body: JSON.stringify({ userId: profileId, eventType: 'dice_roll' })
+        }).catch(err => console.error(err))
+    }
   }
   if (checkingUser) {
     return (
@@ -209,12 +225,14 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
     )
   }
 
+  const currentTheme = THEMES[theme] || THEMES.default
+
   return (
-    <div className="min-h-dvh flex items-center justify-center p-3 md:p-4 bg-black">
+    <div className={`min-h-dvh flex items-center justify-center p-3 md:p-4 ${currentTheme.bg} transition-colors duration-500`}>
       {/* Background Ambience */}
-      <div className="fixed inset-0 z-0 opacity-30 pointer-events-none">
-         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,_#ff0050_0%,_transparent_50%)]" />
-      </div>
+      <div className="fixed inset-0 z-0 opacity-30 pointer-events-none transition-all duration-500"
+         style={{ background: currentTheme.gradient }}
+      />
 
       <Card className="w-full max-w-md relative z-10 min-h-[350px] flex flex-col justify-center" variant="strong">
         <AnimatePresence mode="wait">

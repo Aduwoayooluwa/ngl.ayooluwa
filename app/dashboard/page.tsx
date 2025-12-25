@@ -18,7 +18,9 @@ import { toPng } from 'html-to-image'
 import { useRef } from 'react'
 import { IGShareCard } from '@/components/IGShareCard'
 import { MessageShareCard } from '@/components/MessageShareCard'
-import { Instagram, Download } from 'lucide-react'
+import { Instagram, Download, Share2, Palette } from 'lucide-react'
+import ThemeSelector from '@/components/ThemeSelector'
+import AnalyticsCard from '@/components/AnalyticsCard'
 
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null)
@@ -36,6 +38,7 @@ export default function Dashboard() {
   const messageShareRef = useRef<HTMLDivElement>(null)
   const [generatingImage, setGeneratingImage] = useState(false)
   const [messageToShare, setMessageToShare] = useState<string | null>(null)
+  const [currentTheme, setCurrentTheme] = useState('default')
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, isVisible: true, type })
@@ -48,6 +51,9 @@ export default function Dashboard() {
         router.push('/login')
       } else {
         setUser(user)
+        // Fetch current theme
+        const { data: profile } = await supabase.from('profiles').select('theme').eq('id', user.id).single()
+        if (profile) setCurrentTheme(profile.theme || 'default')
       }
     }
     getUser()
@@ -194,6 +200,9 @@ export default function Dashboard() {
         </div>
       </header>
 
+      {/* Analytics Section */}
+      <AnalyticsCard />
+
       {/* Hero / Link Section */}
       <Card className="text-center py-10 space-y-6" variant="strong">
         <div className="space-y-2">
@@ -220,6 +229,9 @@ export default function Dashboard() {
            </Button>
         </div>
       </Card>
+
+      {/* Theme Selection */}
+      <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} />
 
       {/* Messages Grid */}
       <div className="space-y-4">
