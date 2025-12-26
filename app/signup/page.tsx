@@ -35,6 +35,18 @@ export default function SignUp() {
       return
     }
 
+    const { data: existingUser } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('username', username.toLowerCase()) 
+      .single()
+
+    if (existingUser) {
+      showToast("Username already taken. Please choose another.", 'error')
+      setLoading(false)
+      return
+    }
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -50,11 +62,9 @@ export default function SignUp() {
     if (error) {
       showToast(error.message, 'error')
     } else {
-      // In a real app, you might ask for email confirmation.
-      // For this demo, let's assume they might be auto-signed in or directed to check email.
-      // Supabase default is "Confirm Email".
-      showToast("Account created! Check email for link.", 'success')
-      // Optional: redirect to login or check-email page after delay, or just let them sit there.
+      showToast("Account created!")
+      // Redirect to login after a short delay to let them see the success message
+      setTimeout(() => router.push('/login'), 1500)
     }
     setLoading(false)
   }
