@@ -28,7 +28,6 @@ export default function SignUp() {
     e.preventDefault()
     setLoading(true)
 
-    // Basic username validation
     if (!/^[a-zA-Z0-9_]+$/.test(username)) {
       showToast("Username can only contain letters, numbers, and underscores.", 'error')
       setLoading(false)

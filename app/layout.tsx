@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "NGL.ayooluwa | Ask Me Anything",
     description: "Send me an anonymous message! 100% safe and private.",
-    url: "https://ngl.ayooluwa.com", 
+    url: "https://ngl.aayooluwa.com", 
     siteName: "NGL.ayooluwa",
     locale: "en_US",
     type: "website",
