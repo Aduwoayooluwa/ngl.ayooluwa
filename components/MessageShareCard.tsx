@@ -30,7 +30,7 @@ export const MessageShareCard = forwardRef<HTMLDivElement, MessageShareCardProps
 
         {/* Call to Action Pill */}
          <div className="absolute bottom-[30%] bg-black/20 backdrop-blur-md text-white px-8 py-4 rounded-full text-2xl font-bold border border-white/20 animate-pulse">
-            Reply at ngl.ayooluwa/{username}
+            Reply at ngl.aayooluwa/{username}
          </div>
 
         {/* Footer Branding */}
