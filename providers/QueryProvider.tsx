@@ -25,7 +25,7 @@ export default function QueryProvider({ children }: { children: React.ReactNode 
             theme={{
                 algorithm: theme.darkAlgorithm,
                 token: {
-                    colorPrimary: '#ff0050', // A vibrant pink/red, distinct from NGL's exact shade but energetic
+                    colorPrimary: '#ff0050', 
                     colorBgContainer: '#1a1a1a',
                 },
             }}
