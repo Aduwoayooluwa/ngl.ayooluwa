@@ -1,0 +1,43 @@
+{
+    "name": "NGL.ayooluwa | Anonymous Q&A",
+    "short_name": "NGL.ayooluwa",
+    "description": "Get anonymous messages from your friends, followers, and fans. The most premium anonymous messaging experience.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#ff0050",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Dashboard",
+            "short_name": "Dashboard",
+            "description": "Go to your dashboard",
+            "url": "/dashboard",
+            "icons": [
+                {
+                    "src": "/icon-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ],
+    "categories": [
+        "social",
+        "entertainment",
+        "fun"
+    ]
+}
