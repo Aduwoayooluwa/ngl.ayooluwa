@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { LogOut, Copy, Inbox, Trash2, Bell } from 'lucide-react' 
+import { LogOut, Copy, Inbox, Trash2, Bell, Pin } from 'lucide-react' 
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import { useMessages } from '@/hooks/useMessages'
@@ -21,6 +21,8 @@ import { MessageShareCard } from '@/components/MessageShareCard'
 import { Instagram, Download, Share2, Palette } from 'lucide-react'
 import ThemeSelector from '@/components/ThemeSelector'
 import AnalyticsCard from '@/components/AnalyticsCard'
+import InboxFilters, { DateFilter } from '@/components/InboxFilters'
+import { useMemo } from 'react'
 
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null)
@@ -39,6 +41,64 @@ export default function Dashboard() {
   const [generatingImage, setGeneratingImage] = useState(false)
   const [messageToShare, setMessageToShare] = useState<string | null>(null)
   const [currentTheme, setCurrentTheme] = useState('default')
+  
+  // Filter states
+  const [searchQuery, setSearchQuery] = useState('')
+  const [dateFilter, setDateFilter] = useState<DateFilter>('all')
+  const [showPinnedOnly, setShowPinnedOnly] = useState(false)
+
+  // Filter messages based on search, date, and pinned filters
+  const filteredMessages = useMemo(() => {
+    if (!messages) return []
+    
+    return messages.filter(msg => {
+      // Search filter
+      if (searchQuery && !msg.content.toLowerCase().includes(searchQuery.toLowerCase())) {
+        return false
+      }
+      
+      // Pinned only filter
+      if (showPinnedOnly && !msg.is_pinned) {
+        return false
+      }
+      
+      // Date filter
+      if (dateFilter !== 'all') {
+        const msgDate = new Date(msg.created_at)
+        const now = new Date()
+        
+        if (dateFilter === 'today') {
+          const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+          if (msgDate < today) return false
+        } else if (dateFilter === 'week') {
+          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+          if (msgDate < weekAgo) return false
+        } else if (dateFilter === 'month') {
+          const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+          if (msgDate < monthAgo) return false
+        }
+      }
+      
+      return true
+    })
+  }, [messages, searchQuery, dateFilter, showPinnedOnly])
+
+  // Toggle pin status of a message
+  const handleTogglePin = async (messageId: string, currentlyPinned: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .update({ is_pinned: !currentlyPinned })
+        .eq('id', messageId)
+      
+      if (error) throw error
+      
+      queryClient.invalidateQueries({ queryKey: ['messages'] })
+      showToast(currentlyPinned ? 'Message unpinned' : 'Message pinned!', 'success')
+    } catch (e: any) {
+      showToast('Failed to update pin status: ' + e.message, 'error')
+    }
+  }
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, isVisible: true, type })
@@ -240,31 +300,58 @@ export default function Dashboard() {
           <h3>Inbox</h3>
         </div>
 
+        {/* Filters */}
+        <InboxFilters
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          dateFilter={dateFilter}
+          onDateFilterChange={setDateFilter}
+          showPinnedOnly={showPinnedOnly}
+          onPinnedOnlyChange={setShowPinnedOnly}
+          totalCount={messages?.length || 0}
+          filteredCount={filteredMessages.length}
+        />
+
         {isLoading ? (
           <div className="text-center py-20 text-gray-500">Loading messages...</div>
         ) : error ? (
             <div className="text-center py-20 text-red-400">Error loading messages. Please check your connection.</div>
-        ) : messages && messages.length > 0 ? (
+        ) : filteredMessages.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {messages.map((msg, idx) => (
+            {filteredMessages.map((msg, idx) => (
               <motion.div
                 key={msg.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
+                transition={{ delay: idx * 0.05 }}
               >
-                <Card hoverEffect className="h-full flex flex-col justify-between min-h-[200px] border-l-4 border-l-brand-primary">
-                  <p className="text-lg font-medium leading-relaxed">
+                <Card hoverEffect className={`h-full flex flex-col justify-between min-h-[200px] border-l-4 ${msg.is_pinned ? 'border-l-amber-400 bg-amber-500/5' : 'border-l-brand-primary'}`}>
+                  {msg.is_pinned && (
+                    <div className="flex items-center gap-1 text-amber-400 text-xs font-medium mb-2">
+                      <Pin size={12} />
+                      Pinned
+                    </div>
+                  )}
+                  <p className="text-lg font-medium leading-relaxed flex-1">
                     {msg.content}
                   </p>
                   <div className="mt-4 flex justify-between items-end">
-                     <button 
-                        onClick={() => setMessageToShare(msg.content)}
-                        className="text-gray-400 hover:text-brand-primary transition-colors p-2 hover:bg-brand-primary/10 rounded-full"
-                        title="Share this message"
-                     >
-                        <Download size={18} />
-                     </button>
+                     <div className="flex gap-1">
+                       <button 
+                          onClick={() => handleTogglePin(msg.id, msg.is_pinned)}
+                          className={`transition-colors p-2 rounded-full ${msg.is_pinned ? 'text-amber-400 bg-amber-500/10' : 'text-gray-400 hover:text-amber-400 hover:bg-amber-500/10'}`}
+                          title={msg.is_pinned ? 'Unpin message' : 'Pin message'}
+                       >
+                          <Pin size={18} />
+                       </button>
+                       <button 
+                          onClick={() => setMessageToShare(msg.content)}
+                          className="text-gray-400 hover:text-brand-primary transition-colors p-2 hover:bg-brand-primary/10 rounded-full"
+                          title="Share this message"
+                       >
+                          <Download size={18} />
+                       </button>
+                     </div>
                      <div className="text-xs text-gray-500 font-mono">
                         {new Date(msg.created_at).toLocaleDateString()}
                      </div>
@@ -272,6 +359,14 @@ export default function Dashboard() {
                 </Card>
               </motion.div>
             ))}
+          </div>
+        ) : messages && messages.length > 0 ? (
+          <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/5 border-dashed">
+            <div className="bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+              <Inbox size={32} />
+            </div>
+            <p className="text-gray-400">No messages match your filters.</p>
+            <p className="text-gray-600 text-sm">Try adjusting your search or filters.</p>
           </div>
         ) : (
           <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/5 border-dashed">

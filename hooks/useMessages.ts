@@ -12,6 +12,7 @@ export const useMessages = () => {
       const { data, error } = await supabase
         .from('messages')
         .select('*')
+        .order('is_pinned', { ascending: false })
         .order('created_at', { ascending: false })
 
       if (error) {
