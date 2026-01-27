@@ -1,0 +1,50 @@
+# NGL.ayooluwa - Anonymous Q&A Platform
+
+> A premium anonymous messaging experience where you can receive honest, anonymous messages from friends, followers, and fans.
+
+## Site Information
+- URL: https://ngl.aayooluwa.com
+- Name: NGL.ayooluwa
+- Creator: Aduwo Ayooluwa
+
+## What is NGL.ayooluwa?
+NGL.ayooluwa is an anonymous question-and-answer platform that allows users to:
+- Create a personalized anonymous messaging page
+- Share their unique link on social media (Instagram, TikTok, Snapchat, etc.)
+- Receive anonymous messages, questions, and confessions
+- View and manage messages in a private dashboard
+- Pin important messages
+- Customize their profile with various themes
+
+## Core Features
+1. **Anonymous Messaging**: Send messages without revealing your identity
+2. **Instant Notifications**: Real-time push notifications when new messages arrive
+3. **Theme Customization**: Choose from multiple premium themes (Classic, Love, Ocean, Forest, Midnight, Sunset)
+4. **PWA Support**: Install as a mobile app for instant access
+5. **Message Management**: Pin, search, and filter your inbox
+
+## Pages
+- `/` - Home page with app introduction
+- `/login` - User login
+- `/signup` - Create new account
+- `/dashboard` - Authenticated user inbox and settings
+- `/{username}` - Public anonymous message submission page
+
+## Privacy & Security
+- No sender tracking
+- Complete anonymity for message senders
+- Secure authentication via Supabase
+- Users can only view messages sent to them
+
+## Technical Stack
+- Next.js 16
+- React 19
+- Supabase for authentication and database
+- PWA enabled with offline support
+- Responsive design for all devices
+
+## Keywords
+anonymous messaging, ngl clone, anonymous questions, confession app, anonymous feedback, social media, honest feedback, q&a platform
+
+## Social
+- Twitter/X: @codingpastor

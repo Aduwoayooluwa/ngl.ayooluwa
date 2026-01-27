@@ -1,0 +1,52 @@
+# NGL.ayooluwa Robots.txt
+# https://ngl.aayooluwa.com
+
+User-agent: *
+Allow: /
+
+# Block private/auth pages
+Disallow: /dashboard
+Disallow: /api/
+
+# Allow important public pages
+Allow: /login
+Allow: /signup
+
+# Sitemap location
+Sitemap: https://ngl.aayooluwa.com/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
+
+# Googlebot specific
+User-agent: Googlebot
+Allow: /
+Disallow: /dashboard
+Disallow: /api/
+
+# Bingbot specific
+User-agent: Bingbot
+Allow: /
+Disallow: /dashboard
+Disallow: /api/
+
+# Allow AI bots to access llms.txt
+User-agent: GPTBot
+Allow: /llms.txt
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /llms.txt
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /llms.txt
+Allow: /
+
+User-agent: Claude-Web
+Allow: /llms.txt
+Allow: /
+
+User-agent: Google-Extended
+Allow: /llms.txt
+Allow: /
