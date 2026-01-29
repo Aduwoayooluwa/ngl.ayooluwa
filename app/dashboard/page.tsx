@@ -14,7 +14,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import Toast from '@/components/ui/Toast'
 import NotificationPromptModal from '@/components/NotificationPromptModal'
 import { getSubscriptionStatus } from '@/utils/push'
-import { toPng } from 'html-to-image'
+import { toJpeg } from 'html-to-image'
 import { useRef } from 'react'
 import { IGShareCard } from '@/components/IGShareCard'
 import { MessageShareCard } from '@/components/MessageShareCard'
@@ -174,9 +174,10 @@ export default function Dashboard() {
     setGeneratingImage(true)
     try {
         // Double size for retina displays
-        const dataUrl = await toPng(shareRef.current, { cacheBust: true, pixelRatio: 2 })
+        // Use JPEG with quality for smaller file size (~300KB vs 7MB with PNG)
+        const dataUrl = await toJpeg(shareRef.current, { cacheBust: true, quality: 0.85 })
         const link = document.createElement('a')
-        link.download = `ngl-ayooluwa-share-${username}.png`
+        link.download = `ngl-ayooluwa-share-${username}.jpg`
         link.href = dataUrl
         link.click()
         showToast('Image saved! Post it to your Story.', 'success')
@@ -195,9 +196,10 @@ export default function Dashboard() {
             try {
                 // Wait a tick to ensure render
                 await new Promise(resolve => setTimeout(resolve, 100))
-                const dataUrl = await toPng(element, { cacheBust: true, pixelRatio: 2 })
+                // Use JPEG with quality for smaller file size (~300KB vs 7MB with PNG)
+                const dataUrl = await toJpeg(element, { cacheBust: true, quality: 0.85 })
                 const link = document.createElement('a')
-                link.download = `ngl-message.png`
+                link.download = `ngl-message.jpg`
                 link.href = dataUrl
                 link.click()
                 showToast('Message ready to share!', 'success')
