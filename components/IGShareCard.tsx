@@ -9,7 +9,7 @@ export const IGShareCard = forwardRef<HTMLDivElement, IGShareCardProps>(({ usern
     <div 
         ref={ref}
         className="width-[1080px] height-[1920px] bg-gradient-to-br from-[#ff0050] to-[#00f2ea] flex items-center justify-center relative overflow-hidden"
-        style={{ width: '1080px', height: '1920px' }} // Fixed resolution for high quality IG Story
+        style={{ width: '1080px', height: '1920px' }}
     >
         {/* Background Texture/Noise */}
         <div className="absolute inset-0 bg-black/10 mix-blend-overlay" />
@@ -34,7 +34,7 @@ export const IGShareCard = forwardRef<HTMLDivElement, IGShareCardProps>(({ usern
             
             <div className="pt-4  px-10">
                 <div className="bg-gray-100 rounded-full py-6 px-10 text-3xl font-bold text-gray-500 font-mono">
-                    ngl.ayooluwa/{username}
+                    ngl.aayooluwa.com/{username}
                 </div>
             </div>
 
@@ -45,7 +45,7 @@ export const IGShareCard = forwardRef<HTMLDivElement, IGShareCardProps>(({ usern
 
         {/* Footer Branding */}
         <div className="absolute bottom-20 text-white text-3xl font-bold opacity-80">
-            ngl<span className="text-black/50">.ayooluwa</span>
+            ngl<span className="text-black/50">.aayooluwa.com</span>
         </div>
     </div>
   )
