@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { LogOut, Copy, Inbox, Trash2, Bell, Pin } from 'lucide-react' 
+import { LogOut, Copy, Inbox, Trash2, Bell, Pin, MessageSquare } from 'lucide-react' 
 import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import { useMessages } from '@/hooks/useMessages'
@@ -23,6 +23,7 @@ import ThemeSelector from '@/components/ThemeSelector'
 import AnalyticsCard from '@/components/AnalyticsCard'
 import InboxFilters, { DateFilter } from '@/components/InboxFilters'
 import { useMemo } from 'react'
+import ChatsPanel from '@/components/ChatsPanel'
 
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null)
@@ -35,6 +36,8 @@ export default function Dashboard() {
   const [isSubscribed, setIsSubscribed] = useState(false)
   const queryClient = useQueryClient()
   const [toast, setToast] = useState({ message: '', isVisible: false, type: 'success' as 'success' | 'error' })
+  const [activeTab, setActiveTab] = useState<'inbox' | 'chats'>('inbox')
+  const tab = activeTab as string
   
   const shareRef = useRef<HTMLDivElement>(null)
   const messageShareRef = useRef<HTMLDivElement>(null)
@@ -295,24 +298,47 @@ export default function Dashboard() {
       {/* Theme Selection */}
       <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} />
 
-      {/* Messages Grid */}
+      {/* Inbox / Chats Tab Switcher + Content */}
       <div className="space-y-4">
-        <div className="flex items-center gap-2 text-xl font-bold">
-          <Inbox className="text-brand-primary" />
-          <h3>Inbox</h3>
+        {/* Tab Switcher */}
+        <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-2xl p-1 w-fit">
+          <button
+            onClick={() => setActiveTab('inbox')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+              tab === 'inbox'
+                ? 'bg-white/10 text-white'
+                : 'text-gray-500 hover:text-gray-300'
+            }`}
+          >
+            <Inbox size={16} />
+            Inbox
+          </button>
+          <button
+            onClick={() => setActiveTab('chats')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+              tab === 'chats'
+                ? 'bg-white/10 text-white'
+                : 'text-gray-500 hover:text-gray-300'
+            }`}
+          >
+            <MessageSquare size={16} />
+            Chats
+          </button>
         </div>
 
-        {/* Filters */}
-        <InboxFilters
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          dateFilter={dateFilter}
-          onDateFilterChange={setDateFilter}
-          showPinnedOnly={showPinnedOnly}
-          onPinnedOnlyChange={setShowPinnedOnly}
-          totalCount={messages?.length || 0}
-          filteredCount={filteredMessages.length}
-        />
+        {/* Inbox Panel */}
+        {tab === 'inbox' && (
+          <div className="space-y-4">
+            <InboxFilters
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              dateFilter={dateFilter}
+              onDateFilterChange={setDateFilter}
+              showPinnedOnly={showPinnedOnly}
+              onPinnedOnlyChange={setShowPinnedOnly}
+              totalCount={messages?.length || 0}
+              filteredCount={filteredMessages.length}
+            />
 
         {isLoading ? (
           <div className="text-center py-20 text-gray-500">Loading messages...</div>
@@ -378,6 +404,13 @@ export default function Dashboard() {
             <p className="text-gray-400">No messages yet.</p>
             <p className="text-gray-600 text-sm">Share your link to get started!</p>
           </div>
+        )}
+          </div>
+        )}
+
+        {/* Chats Panel */}
+        {tab === 'chats' && (
+          <ChatsPanel theme={currentTheme} username={username} />
         )}
       </div>
 

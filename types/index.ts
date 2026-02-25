@@ -14,3 +14,20 @@ export interface Message {
   is_read: boolean
   is_pinned: boolean
 }
+
+export interface ChatMessage {
+  id: string
+  sender_type: 'anonymous' | 'owner'
+  content: string
+  created_at: string
+}
+
+export interface ChatSession {
+  id: string
+  secret_token: string
+  name: string | null
+  created_at: string
+  expires_at: string
+  lastMessage: ChatMessage | null
+  messageCount: number
+}

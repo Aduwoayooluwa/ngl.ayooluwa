@@ -69,7 +69,7 @@ export default function SignUp() {
   }
 
   return (
-    <div className="min-h-dvh flex items-center justify-center p-3 md:p-4 bg-[url('/bg-gradient.svg')] bg-cover">
+    <div className="min-h-dvh flex items-center justify-center p-3 md:p-4" style={{ backgroundImage: "url('/bg-gradient.svg')", backgroundSize: 'cover' }}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-0" />
       
       <Card className="w-full max-w-md relative z-10" hoverEffect>

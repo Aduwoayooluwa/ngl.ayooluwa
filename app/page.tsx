@@ -30,7 +30,7 @@ export default function Home() {
       <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-[radial-gradient(circle,_var(--color-brand-secondary)_0%,_transparent_70%)] opacity-20 blur-[120px] animate-pulse-slow delay-1000" />
 
       {/* Grid Pattern */}
-      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+      <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "url('/grid.svg')" }} />
 
       {/* Nav */}
       <nav className="relative z-50 flex items-center justify-between p-4 md:p-6 max-w-7xl mx-auto">
@@ -161,7 +161,7 @@ export default function Home() {
                whileHover={{ y: -10 }}
                className="col-span-1 md:col-span-3 p-6 md:p-10 rounded-[2.5rem] bg-gradient-to-r from-gray-900 to-black border border-white/10 relative overflow-hidden group"
              >
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
+                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "url('/grid.svg')" }} />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-brand-secondary/5 blur-[80px]" />
                 
                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
