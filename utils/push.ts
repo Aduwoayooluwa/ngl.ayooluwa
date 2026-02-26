@@ -35,7 +35,7 @@ export async function subscribeToPush() {
     applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
   })
 
-  // Save subscription to Supabase
+  // Save subscription to Supabase (for logged-in users / receivers)
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   
@@ -47,6 +47,30 @@ export async function subscribeToPush() {
   }
 
   return subscription
+}
+
+/**
+ * Subscribe an anonymous visitor (no login required).
+ * Returns the raw PushSubscription to be sent along with the message request.
+ * The subscription is NOT stored in the database — it lives only in memory.
+ */
+export async function subscribeAnonymousSender(): Promise<PushSubscription | null> {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return null
+  try {
+    const registration = await navigator.serviceWorker.ready
+    // Re-use existing subscription if already granted
+    const existing = await registration.pushManager.getSubscription()
+    if (existing) return existing
+
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+    })
+    return subscription
+  } catch {
+    // User denied notifications or browser doesn't support — fail silently
+    return null
+  }
 }
 
 function urlBase64ToUint8Array(base64String: string) {

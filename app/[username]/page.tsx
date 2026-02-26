@@ -9,6 +9,7 @@ import Button from '@/components/ui/Button'
 import Card from '@/components/ui/Card'
 import { Send, CheckCircle, SearchX, Home, Dices } from 'lucide-react'
 import { THEMES } from '@/utils/constants'
+import { registerServiceWorker, subscribeAnonymousSender } from '@/utils/push'
 
 const PROMPTS = [
   "Send me anonymous compliments! 💖",
@@ -45,6 +46,7 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
   const [isInvalidUser, setIsInvalidUser] = useState(false)
   const [checkingUser, setCheckingUser] = useState(true)
   const [theme, setTheme] = useState('default')
+  const [senderSubscription, setSenderSubscription] = useState<PushSubscription | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -72,6 +74,15 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
     }
     getProfile()
   }, [username, supabase])
+
+  // Silently subscribe the sender to push notifications after the page loads
+  useEffect(() => {
+    registerServiceWorker().then(() => {
+      subscribeAnonymousSender().then(sub => {
+        if (sub) setSenderSubscription(sub)
+      })
+    })
+  }, [])
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -103,13 +114,13 @@ export default function PublicProfile({ params }: { params: Promise<{ username: 
     try {
         const response = await fetch('/api/send-message', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 userId: targetId,
                 content: message,
-                meta: getMeta()
+                meta: getMeta(),
+                username,
+                senderSubscription: senderSubscription ? senderSubscription.toJSON() : null,
             })
         })
 

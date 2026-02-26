@@ -60,27 +60,48 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Failed to send message' }, { status: 500 })
     }
 
-    // 4. Notify receiver via push
+    const chatUrl = `/c/${session.secret_token}`
+
+    // 4. Notify receiver and sender in parallel — fire-and-forget
     const { data: subData } = await supabaseAdmin
       .from('subscriptions')
       .select('subscription')
       .eq('user_id', profile.id)
       .maybeSingle()
 
+    const pushTasks: Promise<any>[] = []
+
     if (subData?.subscription) {
-      try {
-        await webpush.sendNotification(
+      pushTasks.push(
+        webpush.sendNotification(
           subData.subscription,
           JSON.stringify({
-            title: 'New Anonymous Chat!',
+            title: 'New anonymous chat! 💬',
             body: firstMessage.trim().slice(0, 80),
             icon: LOGO_URL,
+            badge: LOGO_URL,
+            url: '/dashboard',
           })
-        )
-      } catch (e) {
-        console.error('[chat/start] Push to receiver failed:', e)
-      }
+        ).catch(e => console.error('[chat/start] Push to receiver failed:', e))
+      )
     }
+
+    if (senderPushSubscription) {
+      pushTasks.push(
+        webpush.sendNotification(
+          senderPushSubscription,
+          JSON.stringify({
+            title: 'Chat started! ✓',
+            body: 'Your anonymous chat was created. Wait for a reply!',
+            icon: LOGO_URL,
+            badge: LOGO_URL,
+            url: chatUrl,
+          })
+        ).catch(e => console.error('[chat/start] Push to sender failed:', e))
+      )
+    }
+
+    await Promise.allSettled(pushTasks)
 
     return NextResponse.json({ token: session.secret_token })
   } catch (err: any) {

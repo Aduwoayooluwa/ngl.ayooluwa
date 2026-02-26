@@ -57,6 +57,7 @@ export async function POST(
   try {
     const { token } = await params
     const { content, senderType } = await request.json()
+    const chatUrl = `/c/${token}`
 
     if (!content?.trim() || !senderType) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
@@ -93,36 +94,47 @@ export async function POST(
     }
 
     // Fire-and-forget push notifications — never block the response
+    const pushTasks: Promise<any>[] = []
+
     if (senderType === 'anonymous') {
-      // Notify the receiver (owner) — don't await
-      supabaseAdmin
+      // Notify the receiver (logged-in owner)
+      const { data: subData } = await supabaseAdmin
         .from('subscriptions')
         .select('subscription')
         .eq('user_id', session.receiver_id)
         .maybeSingle()
-        .then(({ data: subData }) => {
-          if (subData?.subscription) {
-            webpush.sendNotification(
-              subData.subscription,
-              JSON.stringify({
-                title: 'New message in anonymous chat',
-                body: content.trim().slice(0, 80),
-                icon: LOGO_URL,
-              })
-            ).catch(e => console.error('[chat/messages] Push to receiver failed:', e))
-          }
-        })
+
+      if (subData?.subscription) {
+        pushTasks.push(
+          webpush.sendNotification(
+            subData.subscription,
+            JSON.stringify({
+              title: 'New message in your anonymous chat 💬',
+              body: content.trim().slice(0, 80),
+              icon: LOGO_URL,
+              badge: LOGO_URL,
+              url: '/dashboard',
+            })
+          ).catch(e => console.error('[chat/messages] Push to receiver failed:', e))
+        )
+      }
     } else if (senderType === 'owner' && session.sender_push_subscription) {
-      // Notify the anonymous sender — don't await
-      webpush.sendNotification(
-        session.sender_push_subscription,
-        JSON.stringify({
-          title: 'They replied to your anonymous chat!',
-          body: content.trim().slice(0, 80),
-          icon: LOGO_URL,
-        })
-      ).catch(e => console.error('[chat/messages] Push to sender failed:', e))
+      // Notify the anonymous sender
+      pushTasks.push(
+        webpush.sendNotification(
+          session.sender_push_subscription,
+          JSON.stringify({
+            title: 'They replied to your anonymous chat! 💬',
+            body: content.trim().slice(0, 80),
+            icon: LOGO_URL,
+            badge: LOGO_URL,
+            url: chatUrl,
+          })
+        ).catch(e => console.error('[chat/messages] Push to sender failed:', e))
+      )
     }
+
+    await Promise.allSettled(pushTasks)
 
     return NextResponse.json({ message: newMsg })
   } catch (err: any) {
